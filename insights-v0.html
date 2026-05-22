@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Insights — Default Social (v0)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <style>
+    .page-hero {
+      padding: 200px 0 60px;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-hero .grid {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items: end;
+    }
+    @media (max-width: 900px) { .page-hero .grid { grid-template-columns: 1fr; gap: 40px; } }
+    .page-hero h1 { font-size: clamp(56px, 9vw, 140px); }
+
+    /* AI search bar */
+    .ai-search {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--line));
+      border-radius: 999px;
+      background: var(--ink-2);
+      max-width: 540px;
+    }
+    .ai-search .spark { color: var(--accent); font-family: var(--serif); font-size: 22px; line-height: 1; }
+    .ai-search input {
+      flex: 1; background: none; border: none; color: var(--cream); font: inherit;
+    }
+    .ai-search input:focus { outline: none; }
+    .ai-search .kbd {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--muted);
+      padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px;
+    }
+
+    /* Filter chips */
+    .filters-bar {
+      position: sticky; top: 86px;
+      padding: 16px 0;
+      background: color-mix(in oklch, var(--ink) 80%, transparent);
+      backdrop-filter: blur(16px);
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+    }
+    .filters-bar .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filters-bar .row .lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 8px; }
+    .filters-bar .chip {
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--line);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--cream-2);
+      cursor: pointer;
+      transition: border-color .15s ease, color .15s ease, background .15s ease;
+    }
+    .filters-bar .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .filters-bar .chip[aria-pressed="true"] {
+      background: var(--accent); color: var(--ink); border-color: var(--accent);
+    }
+
+    /* Featured article */
+    .featured {
+      padding: 80px 0;
+    }
+    .featured .frame {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      align-items: stretch;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--ink-2), var(--ink));
+    }
+    @media (max-width: 900px) { .featured .frame { grid-template-columns: 1fr; gap: 0; } }
+    .featured .cover {
+      min-height: 480px;
+      background:
+        radial-gradient(circle at 30% 30%, color-mix(in oklch, var(--accent) 25%, var(--ink-3)), transparent 55%),
+        radial-gradient(circle at 70% 70%, color-mix(in oklch, var(--accent) 12%, var(--ink-3)), transparent 60%),
+        repeating-linear-gradient(135deg, var(--ink-2) 0 14px, var(--ink-3) 14px 28px);
+      position: relative;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 36px;
+    }
+    .featured .cover .glyph {
+      position: absolute; top: 36px; right: 36px;
+      font-family: var(--serif); font-size: clamp(64px, 9vw, 140px);
+      color: var(--cream); opacity: 0.7;
+      letter-spacing: -0.04em;
+    }
+    .featured .cover .meta-pill {
+      display: inline-flex; gap: 8px; padding: 6px 12px; border-radius: 999px;
+      background: var(--ink); border: 1px solid var(--line);
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cream); align-self: flex-start;
+    }
+    .featured .body { padding: 56px; display: flex; flex-direction: column; gap: 24px; }
+    .featured .body h2 { font-size: clamp(36px, 4.6vw, 64px); }
+    .featured .body p { color: var(--cream-2); font-size: 17px; line-height: 1.55; max-width: 52ch; }
+    .featured .meta { display: flex; gap: 18px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .featured .author {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 8px;
+    }
+    .featured .author .av {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); color: var(--ink);
+      font-family: var(--serif); font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .featured .author .who { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2); }
+
+    /* Articles grid */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px;
+      margin-top: 24px;
+    }
+    @media (max-width: 900px) { .articles-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .articles-grid { grid-template-columns: 1fr; } }
+    .article {
+      display: flex; flex-direction: column; gap: 18px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
+    .article:hover { transform: translateY(-2px); }
+    .article .thumb {
+      aspect-ratio: 4/3; border-radius: 14px;
+      border: 1px solid var(--line);
+      position: relative; overflow: hidden;
+    }
+    .article .thumb.t-1 { background: radial-gradient(circle at 30% 40%, color-mix(in oklch, var(--accent) 22%, var(--ink-3)), transparent 60%), repeating-linear-gradient(135deg, var(--ink-2) 0 12px, var(--ink-3) 12px 24px); }
+    .article .thumb.t-2 { background: linear-gradient(135deg, var(--ink-3), var(--ink-2)); }
+    .article .thumb.t-3 { background: radial-gradient(ellipse at center, color-mix(in oklch, var(--accent) 18%, var(--ink-3)), transparent 55%), var(--ink-2); }
+    .article .thumb.t-4 { background: repeating-linear-gradient(90deg, var(--ink-2) 0 18px, var(--ink-3) 18px 36px); }
+    .article .thumb.t-5 { background: linear-gradient(180deg, color-mix(in oklch, var(--accent) 14%, var(--ink-3)), var(--ink-2)); }
+    .article .thumb.t-6 { background: repeating-linear-gradient(45deg, var(--ink-2) 0 16px, var(--ink-3) 16px 32px); }
+    .article .thumb .glyph {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 96px; color: var(--cream); opacity: 0.65;
+      letter-spacing: -0.04em;
+    }
+    .article .thumb .tag {
+      position: absolute; top: 14px; left: 14px;
+    }
+    .article .meta { display: flex; gap: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .article h3 { font-size: 26px; line-height: 1.15; }
+    .article .ex { color: var(--cream-2); font-size: 15px; line-height: 1.5; }
+    .article .read { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: auto; }
+
+    /* AI digest sidebar */
+    .digest-section { background: linear-gradient(180deg, var(--ink-2), var(--ink)); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .digest {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .digest { grid-template-columns: 1fr; } }
+    .digest .head h2 { font-size: clamp(36px, 5vw, 64px); }
+    .digest .head p { color: var(--cream-2); margin-top: 18px; max-width: 42ch; }
+    .digest-panel {
+      border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--line));
+      border-radius: 16px;
+      padding: 28px;
+      background: var(--ink);
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .digest-panel .row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 18px; border-bottom: 1px solid var(--line);
+    }
+    .digest-panel ol { list-style: none; padding: 0; margin: 0; counter-reset: digest; display: flex; flex-direction: column; gap: 14px; }
+    .digest-panel ol li {
+      counter-increment: digest;
+      display: grid; grid-template-columns: 28px 1fr; gap: 14px;
+      padding: 14px 0; border-top: 1px solid var(--line);
+    }
+    .digest-panel ol li::before {
+      content: counter(digest, decimal-leading-zero);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--accent);
+    }
+    .digest-panel ol li .ti { font-family: var(--serif); font-size: 20px; line-height: 1.2; }
+    .digest-panel ol li .me { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
+
+    /* Newsletter */
+    .newsletter {
+      padding: 100px 0;
+      border-top: 1px solid var(--line);
+    }
+    .newsletter .frame {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      padding: 56px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, color-mix(in oklch, var(--accent) 6%, var(--ink-2)), var(--ink));
+    }
+    @media (max-width: 820px) { .newsletter .frame { grid-template-columns: 1fr; padding: 32px; } }
+    .newsletter h2 { font-size: clamp(36px, 5vw, 64px); }
+    .newsletter p { color: var(--cream-2); margin-top: 16px; }
+    .newsletter form {
+      display: flex; gap: 8px; padding: 8px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: var(--ink-2);
+      margin-top: 28px;
+    }
+    .newsletter form input {
+      flex: 1; background: none; border: none; color: var(--cream); font: inherit;
+      padding: 8px 14px;
+    }
+    .newsletter form input:focus { outline: none; }
+    .newsletter form button {
+      padding: 10px 20px; border-radius: 999px;
+      background: var(--accent); color: var(--ink);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600;
+    }
+    .newsletter .signal-list {
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .newsletter .signal-row {
+      display: grid; grid-template-columns: 32px 1fr;
+      gap: 14px; padding: 14px 0; border-top: 1px solid var(--line);
+    }
+    .newsletter .signal-row .ic {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid var(--accent); color: var(--accent);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+      margin-top: 4px;
+    }
+    .newsletter .signal-row h4 { font-family: var(--serif); font-size: 18px; }
+    .newsletter .signal-row p { color: var(--cream-2); font-size: 14px; margin-top: 4px; }
+  </style>
+</head>
+<body data-screen-label="04 Insights">
+
+  <nav class="nav">
+    <a href="index-v0.html" class="brand"><span class="dot"></span>Default · Social</a>
+    <div class="links">
+      <a href="index-v0.html">Index</a>
+      <a href="services-v0.html">Services</a>
+      <a href="about-v0.html">About</a>
+      <a href="insights-v0.html" class="active">Insights</a>
+    </div>
+    <a href="index-v0.html#contact" class="cta">Start a project <span>→</span></a>
+  </nav>
+
+  <header class="page-hero">
+    <div class="container">
+      <div style="margin-bottom: 36px;" class="eyebrow">Insights</div>
+      <div class="grid">
+        <h1 class="serif">Field notes<br/>from the<br/><em style="color: var(--accent); font-style: italic;">practice.</em></h1>
+        <div>
+          <p class="lede">
+            Essays, teardowns and quiet experiments — written by our practice leads.
+            Long-form by default, edited by humans, published when we have something worth saying.
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="container">
+      <div class="row">
+        <span class="lbl">Filter by</span>
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="ai">AI Practice</button>
+        <button class="chip" data-filter="web">Web</button>
+        <button class="chip" data-filter="seo">SEO</button>
+        <button class="chip" data-filter="social">Social</button>
+        <button class="chip" data-filter="strategy">Strategy</button>
+        <button class="chip" data-filter="ops">Studio Ops</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured -->
+  <section class="featured" data-screen-label="Featured">
+    <div class="container">
+      <article class="frame">
+        <div class="cover">
+          <span class="glyph">⌁</span>
+          <span class="meta-pill"><span style="color: var(--accent);">●</span> Featured · May 2026</span>
+        </div>
+        <div class="body">
+          <div class="meta">
+            <span>AI Practice</span>
+            <span>·</span>
+            <span>12 min read</span>
+          </div>
+          <h2 class="serif">The AI concierge isn't a chatbot. It's a sales engineer.</h2>
+          <p>
+            Most "AI on the website" projects fail because they treat AI as a feature — a chatbot
+            in the corner. The teams that win treat it as a role: the sales engineer who's
+            always on, always patient, and always one step ahead of the brief. Here's the
+            four-layer pattern we use to make that real.
+          </p>
+          <div class="author">
+            <div class="av">R</div>
+            <div class="who">Robin McGlashan · Founder, Default Media Group</div>
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 12px;">
+            <a class="btn" href="#">Read the essay <span class="arr">→</span></a>
+            <a class="btn ghost" href="#">Open in reader <span class="arr">→</span></a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Articles grid -->
+  <section style="padding-top: 40px;">
+    <div class="container">
+      <div class="section-head" style="margin-bottom: 24px;">
+        <div class="title-block">
+          <div class="eyebrow">Library · 36 essays</div>
+          <h2>Recent reading.</h2>
+        </div>
+        <p class="meta">Updated weekly. Long-form by default — we'd rather publish one good essay than ten posts.</p>
+      </div>
+
+      <div class="articles-grid" id="articles-grid">
+        <article class="article" data-cat="seo">
+          <div class="thumb t-1"><span class="pill ai tag">SEO</span><span class="glyph">A</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Apr 2026</span><span>·</span><span>6 min</span></div>
+          <h3 class="serif">Topic clusters in the age of answer engines.</h3>
+          <p class="ex">How to restructure content for sites that need to be both Google-friendly and LLM-citable — without doubling the production cost.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="social">
+          <div class="thumb t-2"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">Social</span><span class="glyph">⌖</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Apr 2026</span><span>·</span><span>4 min</span></div>
+          <h3 class="serif">Anatomy of a campaign that travelled 14m times.</h3>
+          <p class="ex">A short forensic on a recent platform-native idea: the brief, the spike, and the long tail no-one talks about.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="ai">
+          <div class="thumb t-3"><span class="pill ai tag">AI Practice</span><span class="glyph">⌁</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Mar 2026</span><span>·</span><span>9 min</span></div>
+          <h3 class="serif">Personalisation without the creep factor.</h3>
+          <p class="ex">A working pattern for first-party personalisation that improves the experience without spooking the user — or the regulator.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="web">
+          <div class="thumb t-4"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">Web</span><span class="glyph">⌗</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Mar 2026</span><span>·</span><span>7 min</span></div>
+          <h3 class="serif">Why we ship Next.js with an AI middleware layer.</h3>
+          <p class="ex">A look at our default stack — and the three middleware patterns that have made the biggest difference for clients.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="strategy">
+          <div class="thumb t-5"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">Strategy</span><span class="glyph">⌬</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Mar 2026</span><span>·</span><span>11 min</span></div>
+          <h3 class="serif">The marketing mix is a forecast, not a plan.</h3>
+          <p class="ex">A practical case for predictive mix modelling — and the reason most quarterly plans drift by week six.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="ops">
+          <div class="thumb t-6"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">Studio Ops</span><span class="glyph">⌘</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Feb 2026</span><span>·</span><span>5 min</span></div>
+          <h3 class="serif">Why our discovery is one week, not four.</h3>
+          <p class="ex">What we cut to compress discovery without losing the strategic depth — and the one document we'd never skip.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="ai">
+          <div class="thumb t-3"><span class="pill ai tag">AI Practice</span><span class="glyph">◊</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Feb 2026</span><span>·</span><span>8 min</span></div>
+          <h3 class="serif">The four AI layers every brand site should plan for.</h3>
+          <p class="ex">Experience, content, growth, analytics — and why "AI chatbot" usually only covers a quarter of the value.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="social">
+          <div class="thumb t-2"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">Social</span><span class="glyph">≋</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Feb 2026</span><span>·</span><span>6 min</span></div>
+          <h3 class="serif">Always-on isn't always-posting.</h3>
+          <p class="ex">A counter-intuitive cadence model for social — fewer posts, sharper hooks, better numbers.</p>
+          <span class="read">Read article →</span>
+        </article>
+
+        <article class="article" data-cat="seo">
+          <div class="thumb t-1"><span class="pill tag" style="background: var(--ink); border-color: var(--line);">SEO</span><span class="glyph">∫</span></div>
+          <div class="meta"><span>By David Browne</span><span>·</span><span>Jan 2026</span><span>·</span><span>10 min</span></div>
+          <h3 class="serif">Programmatic SEO, ethical edition.</h3>
+          <p class="ex">Where programmatic still works, where it bites you, and the structural decisions that decide which.</p>
+          <span class="read">Read article →</span>
+        </article>
+      </div>
+
+      <div style="display: flex; justify-content: center; margin-top: 64px;">
+        <a class="btn ghost" href="#">Load more <span class="arr">↓</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="big-mark serif">default<span style="font-style: italic; color: var(--accent);">/social</span></div>
+      <div class="grid" style="margin-top: 64px;">
+        <div>
+          <h4>The studio</h4>
+          <p style="color: var(--cream-2); max-width: 38ch; line-height: 1.55;">An AI-enabled digital media, marketing &amp; technology studio inside the Default Media Group.</p>
+        </div>
+        <div>
+          <h4>Practices</h4>
+          <ul>
+            <li><a href="services-v0.html">Web Development</a></li>
+            <li><a href="services-v0.html">SEO &amp; Organic Growth</a></li>
+            <li><a href="services-v0.html">Social &amp; Viral Campaigns</a></li>
+            <li><a href="services-v0.html">Social-First Creative</a></li>
+            <li><a href="services-v0.html">Marketing Strategy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="about-v0.html">About</a></li>
+            <li><a href="insights-v0.html">Insights</a></li>
+            <li><a href="index-v0.html#contact">Contact</a></li>
+            <li><a href="https://defaultmedia.com">Default Media Group ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5930373f36193d3c3f382c352d343c3d3038773a3634">[email&#160;protected]</a></li>
+            <li>+44 7878 849 182</li>
+            <li>993 Great West Road,<br/>Brentford, TW8 9DF</li>
+          </ul>
+        </div>
+      </div>
+      <div class="colophon">
+        <span>© 2026 Default Social. A Default Media Group company.</span>
+        <span>Built with Next.js · CMS · AI</span>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>  <!-- <script src="version-switcher.js"></script> -->
+  <script>
+    // Filter chips
+    const chips = document.querySelectorAll('.filters-bar .chip');
+    const articles = document.querySelectorAll('#articles-grid .article');
+    chips.forEach(c => c.addEventListener('click', () => {
+      chips.forEach(o => o.setAttribute('aria-pressed', 'false'));
+      c.setAttribute('aria-pressed', 'true');
+      const f = c.dataset.filter;
+      articles.forEach(a => {
+        a.style.display = (f === 'all' || a.dataset.cat === f) ? '' : 'none';
+      });
+    }));
+  </script>
+</body>
+</html>

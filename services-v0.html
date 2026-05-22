@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Services — Default Social (v0)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/styles.css"/>
+  <style>
+    .page-hero {
+      padding: 200px 0 80px;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-hero .grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end;
+    }
+    @media (max-width: 900px) { .page-hero .grid { grid-template-columns: 1fr; gap: 40px; } }
+    .page-hero h1 { font-size: clamp(56px, 9vw, 140px); }
+
+    .toc {
+      position: sticky; top: 86px;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      padding: 16px 0;
+      background: color-mix(in oklch, var(--ink) 80%, transparent);
+      backdrop-filter: blur(16px);
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+    }
+    .toc .container {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .toc a {
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--line);
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--cream-2);
+      transition: border-color .15s ease, color .15s ease;
+    }
+    .toc a:hover, .toc a.active { border-color: var(--accent); color: var(--accent); }
+
+    .practice {
+      padding: 120px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .practice-head {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: end;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 900px) { .practice-head { grid-template-columns: 1fr; gap: 28px; } }
+    .practice .num {
+      font-family: var(--serif);
+      font-size: clamp(80px, 12vw, 180px);
+      line-height: 0.85;
+      color: var(--accent);
+      letter-spacing: -0.04em;
+    }
+    .practice h2 { font-size: clamp(40px, 6vw, 84px); }
+    .practice .blurb {
+      color: var(--cream-2); font-size: 17px; line-height: 1.55;
+      max-width: 52ch;
+      margin-top: 20px;
+    }
+
+    .practice-body {
+      display: grid; grid-template-columns: 1.2fr 0.9fr; gap: 64px;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .practice-body { grid-template-columns: 1fr; gap: 40px; } }
+
+    .offer-list { display: flex; flex-direction: column; }
+    .offer-row {
+      display: grid; grid-template-columns: 32px 1fr; gap: 20px;
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      align-items: start;
+    }
+    .offer-row .check {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent); font-size: 12px;
+      margin-top: 3px;
+    }
+    .offer-row h4 { font-size: 19px; font-family: var(--serif); }
+    .offer-row p { color: var(--cream-2); font-size: 14px; margin-top: 4px; }
+
+    .outcomes {
+      background: linear-gradient(180deg, var(--ink-2), var(--ink));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .outcomes .head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 18px; margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .outcomes .head .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .outcomes .head .pill { background: color-mix(in oklch, var(--accent) 12%, var(--ink)); }
+    .outcomes ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+    .outcomes li {
+      display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: baseline;
+    }
+    .outcomes li .n { font-family: var(--serif); font-size: 36px; color: var(--cream); line-height: 1; }
+    .outcomes li .n em { color: var(--accent); font-style: normal; }
+    .outcomes li .l { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-2); }
+
+    .ai-callout {
+      margin-top: 32px;
+      padding: 24px;
+      border-radius: 12px;
+      background: color-mix(in oklch, var(--accent) 8%, var(--ink-2));
+      border: 1px solid color-mix(in oklch, var(--accent) 30%, var(--line));
+      display: grid; grid-template-columns: 56px 1fr; gap: 18px; align-items: start;
+    }
+    .ai-callout .icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent); color: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 28px;
+    }
+    .ai-callout .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .ai-callout h4 { font-family: var(--serif); font-size: 20px; line-height: 1.25; margin: 0; }
+    .ai-callout p { color: var(--cream-2); font-size: 14px; margin-top: 6px; }
+
+    .practice .process-strip {
+      margin-top: 56px;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 900px) { .practice .process-strip { grid-template-columns: 1fr 1fr; } }
+    .process-strip .step {
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--ink);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .process-strip .step .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--accent); }
+    .process-strip .step h5 { font-family: var(--serif); font-size: 18px; margin: 0; }
+    .process-strip .step p { color: var(--cream-2); font-size: 13px; margin: 0; }
+
+    
+    /* v0: outcomes box removed — single-column practice body */
+    .practice-body { grid-template-columns: 1fr !important; max-width: 880px; gap: 32px; }
+
+    /* Anchor offset for sticky nav */
+    .practice { scroll-margin-top: 140px; }
+  </style>
+</head>
+<body data-screen-label="03 Services">
+
+  <nav class="nav">
+    <a href="index-v0.html" class="brand"><span class="dot"></span>Default · Social</a>
+    <div class="links">
+      <a href="index-v0.html">Index</a>
+      <a href="services-v0.html" class="active">Services</a>
+      <a href="about-v0.html">About</a>
+      <a href="insights-v0.html">Insights</a>
+    </div>
+    <a href="index-v0.html#contact" class="cta">Start a project <span>→</span></a>
+  </nav>
+
+  <header class="page-hero">
+    <div class="container">
+      <div style="margin-bottom: 36px;" class="eyebrow">Services</div>
+      <div class="grid">
+        <h1 class="serif">Five practices.<br/>One <em style="color: var(--accent); font-style: italic;">AI-native</em><br/>operating model.</h1>
+        <div>
+          <p class="lede">
+            Each practice ships standalone work — or networks together as a programme.
+            Underneath all of them: a shared spine of strategy, data and an AI layer
+            built to evolve with the market.
+          </p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky TOC -->
+  <nav class="toc">
+    <div class="container">
+      <a href="#web" data-target="web">01 / Web Development</a>
+      <a href="#seo" data-target="seo">02 / SEO &amp; Organic</a>
+      <a href="#social" data-target="social">03 / Social &amp; Viral</a>
+      <a href="#creative" data-target="creative">04 / Social-First Creative</a>
+      <a href="#strategy" data-target="strategy">05 / Marketing Strategy</a>
+    </div>
+  </nav>
+
+  <!-- 01 Web Development -->
+  <section class="practice" id="web" data-screen-label="Web">
+    <div class="container">
+      <div class="practice-head">
+        <div>
+          <div class="num">01</div>
+          <div class="eyebrow" style="margin-top: 18px;">Practice</div>
+          <h2 class="serif" style="margin-top: 10px;">Web Development</h2>
+        </div>
+        <p class="blurb">
+          Custom, scalable, AI-ready builds — engineered on Next.js and headless
+          architecture. We treat the website as a product, not a brochure: shipped
+          early, instrumented from day one, and built to absorb AI capability
+          without a re-platform.
+        </p>
+      </div>
+
+      <div class="practice-body">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 18px;">What's in it</div>
+          <div class="offer-list">
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Marketing &amp; brand sites</h4>
+                <p>Editorial-grade marketing builds — design-led, performance-tuned, conversion-shaped.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Product front-ends</h4>
+                <p>Customer dashboards, portals and product surfaces — same studio, same standards.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Headless CMS architecture</h4>
+                <p>Sanity, Contentful or custom — content systems your marketing team will actually use.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Performance &amp; Core Web Vitals</h4>
+                <p>Sub-1s LCP, sub-100ms INP, schema-clean structure — non-negotiable, not a phase 2.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>AI-ready architecture</h4>
+                <p>Modular API spine so chat, personalisation and content engines plug in without re-builds.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-callout">
+            <div class="icon">⌁</div>
+            <div>
+              <div class="label">AI Integration</div>
+              <h4 class="serif">A site that thinks at the edge.</h4>
+              <p>We ship Next.js builds with an AI middleware layer for personalisation, chat concierge, and intelligent routing — all GDPR-clean, all observable, all swappable as models evolve.</p>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <div class="process-strip">
+        <div class="step"><span class="n">01</span><h5 class="serif">Discovery</h5><p>Audit + stakeholder interviews</p></div>
+        <div class="step"><span class="n">02</span><h5 class="serif">Architect</h5><p>IA, content model, AI layer plan</p></div>
+        <div class="step"><span class="n">03</span><h5 class="serif">Design</h5><p>Design system + key flows</p></div>
+        <div class="step"><span class="n">04</span><h5 class="serif">Build</h5><p>Next.js + CMS + AI middleware</p></div>
+        <div class="step"><span class="n">05</span><h5 class="serif">Launch</h5><p>QA, perf, 90-day learning loop</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 SEO -->
+  <section class="practice" id="seo" data-screen-label="SEO" style="background: var(--ink-2);">
+    <div class="container">
+      <div class="practice-head">
+        <div>
+          <div class="num">02</div>
+          <div class="eyebrow" style="margin-top: 18px;">Practice</div>
+          <h2 class="serif" style="margin-top: 10px;">SEO &amp;<br/>Organic Growth</h2>
+        </div>
+        <p class="blurb">
+          Search that compounds — technical foundations, topic systems and
+          AI-assisted insight tooling. We build owned audience assets that earn
+          their cost back the first year, then keep returning.
+        </p>
+      </div>
+
+      <div class="practice-body">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 18px;">What's in it</div>
+          <div class="offer-list">
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Technical SEO audits</h4>
+                <p>Crawl, index, schema, Core Web Vitals — the foundations most agencies skip.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Topic &amp; content systems</h4>
+                <p>Topic clusters, briefs, internal linking — structured for both Google and answer engines.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Editorial production</h4>
+                <p>In-house writers + AI-assisted briefs. Quality first, volume second. Human-edited, always.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Programmatic SEO</h4>
+                <p>Where it makes sense — large-scale page generation with data sources you control.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>LLM &amp; AI search optimisation</h4>
+                <p>Structuring content to be cited by AI answer engines — the new top of funnel.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-callout">
+            <div class="icon">⌁</div>
+            <div>
+              <div class="label">AI Integration</div>
+              <h4 class="serif">Briefs written by AI. Stories written by humans.</h4>
+              <p>Our SEO engine uses AI for topic discovery, intent clustering and brief generation — then hands the brief to a human editor. Speed without slop.</p>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <div class="process-strip">
+        <div class="step"><span class="n">01</span><h5 class="serif">Audit</h5><p>Technical + topic gap analysis</p></div>
+        <div class="step"><span class="n">02</span><h5 class="serif">Architect</h5><p>Cluster map + production model</p></div>
+        <div class="step"><span class="n">03</span><h5 class="serif">Brief</h5><p>AI-assisted briefs, edited</p></div>
+        <div class="step"><span class="n">04</span><h5 class="serif">Publish</h5><p>Production cadence + interlinking</p></div>
+        <div class="step"><span class="n">05</span><h5 class="serif">Compound</h5><p>Quarterly refresh + expansion</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Social & Viral -->
+  <section class="practice" id="social" data-screen-label="Social">
+    <div class="container">
+      <div class="practice-head">
+        <div>
+          <div class="num">03</div>
+          <div class="eyebrow" style="margin-top: 18px;">Practice</div>
+          <h2 class="serif" style="margin-top: 10px;">Social &amp;<br/>Viral Campaigns</h2>
+        </div>
+        <p class="blurb">
+          From always-on social systems to viral-first campaign IP. We don't separate
+          "organic" from "campaign" — they're the same operating discipline at different
+          intensities. Signal in, ideas out.
+        </p>
+      </div>
+
+      <div class="practice-body">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 18px;">What's in it</div>
+          <div class="offer-list">
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Always-on social management</h4>
+                <p>Platform-native, channel-strategic, weekly cadence. Six platforms, one playbook.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Viral campaign IP</h4>
+                <p>Original creative concepts engineered for travel — built for the algorithm and the share.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Creator &amp; partnership programmes</h4>
+                <p>Talent identification, briefing and longitudinal partnerships — not one-off posts.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Community management</h4>
+                <p>Comment moderation, DM triage, sentiment dashboards — staffed in-house.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Paid amplification</h4>
+                <p>Where the data says it works. We don't reflex-spend; we test, then scale.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-callout">
+            <div class="icon">⌁</div>
+            <div>
+              <div class="label">AI Integration</div>
+              <h4 class="serif">Audience signal, on tap.</h4>
+              <p>Our audience-AI ingests platform + first-party data and surfaces emerging conversation, content gaps and creative angles weekly — so the campaign team starts informed.</p>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <div class="process-strip">
+        <div class="step"><span class="n">01</span><h5 class="serif">Listen</h5><p>Audience &amp; signal sweep</p></div>
+        <div class="step"><span class="n">02</span><h5 class="serif">Plan</h5><p>Always-on rhythm + campaign IP</p></div>
+        <div class="step"><span class="n">03</span><h5 class="serif">Create</h5><p>Native production at pace</p></div>
+        <div class="step"><span class="n">04</span><h5 class="serif">Publish</h5><p>Platform-native, measured</p></div>
+        <div class="step"><span class="n">05</span><h5 class="serif">Amplify</h5><p>Paid where data says yes</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Social-first creative -->
+  <section class="practice" id="creative" data-screen-label="Creative" style="background: var(--ink-2);">
+    <div class="container">
+      <div class="practice-head">
+        <div>
+          <div class="num">04</div>
+          <div class="eyebrow" style="margin-top: 18px;">Practice</div>
+          <h2 class="serif" style="margin-top: 10px;">Social-First<br/>Creative</h2>
+        </div>
+        <p class="blurb">
+          Short-form, motion, static, episodic. Brand storytelling
+          designed for the feed first — then ported back to broadcast and brand.
+          Performance data informs craft, doesn't replace it.
+        </p>
+      </div>
+
+      <div class="practice-body">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 18px;">What's in it</div>
+          <div class="offer-list">
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Short-form &amp; motion</h4>
+                <p>9:16 first thinking. Vertical, fast, narratively dense, made for the swipe.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Episodic content franchises</h4>
+                <p>Series-format thinking — content that builds audience over weeks, not days.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Brand world &amp; toolkit</h4>
+                <p>Identity, tone, motion language, sound — a system the platforms can stretch.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>In-house studio production</h4>
+                <p>Direction, shoot, edit, post — Brentford studio + remote crews.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Performance-led iteration</h4>
+                <p>Creative reviewed against signal weekly — what hits gets sharpened, what misses gets retired.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-callout">
+            <div class="icon">⌁</div>
+            <div>
+              <div class="label">AI Integration</div>
+              <h4 class="serif">A second pair of eyes on every cut.</h4>
+              <p>Pre-release, our AI scores each piece against hook-strength, retention curves and platform fit — surfacing notes the human editors can take or leave.</p>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <div class="process-strip">
+        <div class="step"><span class="n">01</span><h5 class="serif">Concept</h5><p>Brief + idea sprint</p></div>
+        <div class="step"><span class="n">02</span><h5 class="serif">Script</h5><p>Hooks, beats, platform fit</p></div>
+        <div class="step"><span class="n">03</span><h5 class="serif">Shoot</h5><p>Studio or location</p></div>
+        <div class="step"><span class="n">04</span><h5 class="serif">Edit</h5><p>Cut, AI score, human refine</p></div>
+        <div class="step"><span class="n">05</span><h5 class="serif">Release</h5><p>Platform-native publish</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Strategy -->
+  <section class="practice" id="strategy" data-screen-label="Strategy">
+    <div class="container">
+      <div class="practice-head">
+        <div>
+          <div class="num">05</div>
+          <div class="eyebrow" style="margin-top: 18px;">Practice</div>
+          <h2 class="serif" style="margin-top: 10px;">Marketing<br/>Strategy</h2>
+        </div>
+        <p class="blurb">
+          Integrated digital marketing strategies — data-driven planning, audience
+          architecture, channel mix and forecasting. Predictive AI tooling lets the
+          plan flex with the market, not against it.
+        </p>
+      </div>
+
+      <div class="practice-body">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 18px;">What's in it</div>
+          <div class="offer-list">
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Brand &amp; growth strategy</h4>
+                <p>One coherent story of where the brand goes next, and how it gets paid for getting there.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Audience architecture</h4>
+                <p>Segmentation that's actually used — built around behavioural signal, not personas.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Channel mix &amp; forecasting</h4>
+                <p>Mix modelling and predictive forecasting — what to spend where, and what to expect back.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Measurement frameworks</h4>
+                <p>One north star, three load-bearing metrics, a dashboard the C-suite reads.</p>
+              </div>
+            </div>
+            <div class="offer-row">
+              <span class="check">✓</span>
+              <div>
+                <h4>Fractional CMO / strategy embed</h4>
+                <p>For scale-ups without a CMO — senior strategy on call, weekly cadence.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-callout">
+            <div class="icon">⌁</div>
+            <div>
+              <div class="label">AI Integration</div>
+              <h4 class="serif">Forecasts that update themselves.</h4>
+              <p>Our strategy stack ingests sales, ad spend and engagement data weekly — and the AI re-forecasts the plan, flags drift, and proposes reallocations before the next steering meeting.</p>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+
+      <div class="process-strip">
+        <div class="step"><span class="n">01</span><h5 class="serif">Diagnose</h5><p>Where the brand actually is</p></div>
+        <div class="step"><span class="n">02</span><h5 class="serif">Hypothesise</h5><p>Where it could go, and why</p></div>
+        <div class="step"><span class="n">03</span><h5 class="serif">Model</h5><p>Mix, forecast, predicted impact</p></div>
+        <div class="step"><span class="n">04</span><h5 class="serif">Activate</h5><p>Briefs into the studio</p></div>
+        <div class="step"><span class="n">05</span><h5 class="serif">Adapt</h5><p>Weekly signal, quarterly reset</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="border-top: 1px solid var(--line); padding: 80px 0;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 32px;">
+      <h2 class="serif" style="max-width: 18ch;">Not sure where to start?<br/><em style="color: var(--accent);">Talk to a strategist.</em></h2>
+      <div style="display: flex; gap: 12px;">
+        <a class="btn" href="index-v0.html#contact">Start a project <span class="arr">→</span></a>
+        <a class="btn ghost" href="about-v0.html">About the studio <span class="arr">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="big-mark serif">default<span style="font-style: italic; color: var(--accent);">/social</span></div>
+      <div class="grid" style="margin-top: 64px;">
+        <div>
+          <h4>The studio</h4>
+          <p style="color: var(--cream-2); max-width: 38ch; line-height: 1.55;">An AI-enabled digital media, marketing &amp; technology studio inside the Default Media Group.</p>
+        </div>
+        <div>
+          <h4>Practices</h4>
+          <ul>
+            <li><a href="#web">Web Development</a></li>
+            <li><a href="#seo">SEO &amp; Organic Growth</a></li>
+            <li><a href="#social">Social &amp; Viral Campaigns</a></li>
+            <li><a href="#creative">Social-First Creative</a></li>
+            <li><a href="#strategy">Marketing Strategy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <ul>
+            <li><a href="about-v0.html">About</a></li>
+            <li><a href="insights-v0.html">Insights</a></li>
+            <li><a href="index-v0.html#contact">Contact</a></li>
+            <li><a href="https://defaultmedia.com">Default Media Group ↗</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771e1911183713121116021b031a12131e165914181a">[email&#160;protected]</a></li>
+            <li>+44 7878 849 182</li>
+            <li>993 Great West Road,<br/>Brentford, TW8 9DF</li>
+          </ul>
+        </div>
+      </div>
+      <div class="colophon">
+        <span>© 2026 Default Social. A Default Media Group company.</span>
+        <span>Built with Next.js · CMS · AI</span>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>  <!-- <script src="version-switcher.js"></script> -->
+  <script>
+    // Sticky TOC active highlight
+    const sections = ['web','seo','social','creative','strategy'].map(id => document.getElementById(id));
+    const tocLinks = document.querySelectorAll('.toc a');
+    function onScroll() {
+      const top = window.scrollY + 200;
+      let active = sections[0].id;
+      for (const s of sections) {
+        if (s.offsetTop <= top) active = s.id;
+      }
+      tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === active));
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  </script>
+
+</body>
+</html>
