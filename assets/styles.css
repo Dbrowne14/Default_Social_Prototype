@@ -7,6 +7,8 @@
    inherits the new look without inline-style edits — values are flipped.
    The previous black + green theme is archived at assets/styles-dark-green.css.
 ---------------------------------------------------------------- */
+
+/* build out into tailwind config later, for now just raw css with custom properties for easy global edits during design iteration */
 :root {
   /* Paper grounds (was: dark inks) */
   --ink: oklch(0.95 0.008 85);          /* bone — page bg */

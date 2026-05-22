@@ -1,4 +1,5 @@
 // ---------- Default Social — Hero Animation ----------
+// CONVERT INTO REACT COMPONENTS LATER, THIS IS JUST A PROOF OF CONCEPT FOR NOW
 // Neural-mesh of service nodes + morphing verb headline
 (function() {
   const root = document.getElementById('hero-canvas-root');
